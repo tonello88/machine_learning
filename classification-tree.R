@@ -2,7 +2,6 @@ library(knitr)
 knitr::opts_chunk$set(echo = TRUE)
 library(plyr)
 library(dplyr)
-library(vcd)
 library(AppliedPredictiveModeling)
 library(caret)
 library(ellipse)
@@ -60,6 +59,12 @@ t <- train(formula,titanicTrain,method = "rpart",cp=0.002,maxdepth=8)
 plot(t$finalModel)
 text(t$finalModel)
 summary(t$finalModel)
+
+# Plot with partykit and using specific classifier method
+rpart1 <-rpart(formula,titanicTrain)
+library(partykit)
+tparty <- as.party(rpart1)
+
 
 # make predictions
 x_test <- titanicTest[,2:9]
