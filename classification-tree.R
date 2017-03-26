@@ -67,3 +67,14 @@ y_test <- titanicTest[,1]
 predictions <- predict(t, x_test)
 # summarize results
 confusionMatrix(predictions, y_test)
+
+# Predict with probabilities
+predictions_probs <- predict(t, x_test,type="prob")
+head(predictions_probs)
+
+# Plot ROC curve
+library(pROC)
+rpartROC <- roc(y_test, predictions_probs[, "0"], levels = c("0", "1"))
+plot(rpartROC, type = "S", print.thres = .5)
+
+
