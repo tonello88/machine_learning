@@ -56,6 +56,7 @@ titanicTest  <- titanicTidyNumeric[-trainIndex,]
 
 formula <- as.formula(Survived.yes ~.)
 t <- train(formula,titanicTrain,method = "rpart",cp=0.002,maxdepth=8)
+trf <- train(formula,titanicTrain,method = "rf")
 plot(t$finalModel)
 text(t$finalModel)
 summary(t$finalModel)
@@ -64,14 +65,17 @@ summary(t$finalModel)
 rpart1 <-rpart(formula,titanicTrain)
 library(partykit)
 tparty <- as.party(rpart1)
+plot(tparty)
 
 
 # make predictions
 x_test <- titanicTest[,2:9]
 y_test <- titanicTest[,1]
 predictions <- predict(t, x_test)
+predictionsrf <- predict(trf, x_test)
 # summarize results
 confusionMatrix(predictions, y_test)
+varImp(trf)
 
 # Predict with probabilities
 predictions_probs <- predict(t, x_test,type="prob")
@@ -80,6 +84,12 @@ head(predictions_probs)
 # Plot ROC curve
 library(pROC)
 rpartROC <- roc(y_test, predictions_probs[, "0"], levels = c("0", "1"))
-plot(rpartROC, type = "S", print.thres = .5)
+plot(rpartROC, type = "S", print.thres = "best")
+auc(rpartROC)
 
-
+trandomForest <- randomForest(formula, titanicTrain)
+varImpPlot(trandomForest)
+trandomForestProb <- predict(trandomForest, x_test, type="prob")
+rfROC <- roc(y_test, trandomForestProb[, "0"], levels = c("0", "1"))
+plot(rfROC, type = "S", print.thres = "best")
+auc(rfROC)
