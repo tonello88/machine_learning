@@ -1,5 +1,6 @@
 
-from sklearn.tree import DecisionTreeClassifier 
+#from sklearn.tree import DecisionTreeClassifier 
+from sklearn import tree
 import pandas
 import numpy as np
 import os
@@ -17,19 +18,19 @@ def tree_to_code(tree, feature_names):
         feature_names[i] if i != -2 else "undefined!"
         for i in tree_.feature
     ]
-    print "def tree({}):".format(", ".join(feature_names))
+    print("def tree({}):".format(", ".join(feature_names)))
 
     def recurse(node, depth):
         indent = "  " * depth
         if tree_.feature[node] != -2:
             name = feature_name[node]
             threshold = tree_.threshold[node]
-            print "{}if {} <= {}:".format(indent, name, threshold)
+            print("{}if {} <= {}:".format(indent, name, threshold))
             recurse(tree_.children_left[node], depth + 1)
-            print "{}else:  # if {} > {}".format(indent, name, threshold)
+            print("{}else:  # if {} > {}".format(indent, name, threshold))
             recurse(tree_.children_right[node], depth + 1)
         else:
-            print "{}return {}".format(indent, tree_.value[node])
+            print("{}return {}".format(indent, tree_.value[node]))
 
     recurse(0, 1)
     
@@ -58,7 +59,7 @@ def prepare_data(data):
     features = features.join( cat_to_num(data['Sex']) )
     
     # Adding Embarked categorical value
-    features = features.join( cat_to_num(data['Embarked']) )
+    features = features.join( cat_to_num(data['Embarked'].fillna("")) )
     
     return features
     
@@ -66,12 +67,15 @@ def prepare_data(data):
     
 features = prepare_data(data_train)
 features[:5]
-model = DecisionTreeClassifier()
+model = tree.DecisionTreeClassifier(max_depth = 4)
 model.fit(features, data_train["Survived"])
 
 #print model.decision_path(features)
 
 tree_to_code(model, features.columns)
-print model.score(prepare_data(data_test), data_test["Survived"])
-
+print(model.score(prepare_data(data_test), data_test["Survived"]))
+tree.export_graphviz(model, out_file="titanic_tree.dot")
+# convert with  
+# !dot -Tpng titanic_tree.dot -o titanic_tree.png -Gdpi=600
+# "c:\Program Files (x86)\Graphviz2.38"\bin\dot -Tpng titanic_tree.dot -o titanic_tree.png -Gdpi=600
 
