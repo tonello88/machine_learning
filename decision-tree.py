@@ -5,7 +5,8 @@ import pandas
 import numpy as np
 import os
 
-os.chdir('C:/Users/thimo/Dropbox/corsi/machine_learning/real-world-machine-learning-master')
+#os.chdir('C:/Users/thimo/Dropbox/corsi/machine_learning/real-world-machine-learning-master')
+os.chdir('./')
 data = pandas.read_csv("data/titanic.csv")
 data[:5]
 
