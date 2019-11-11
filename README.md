@@ -14,3 +14,4 @@ To run the code yourself, please clone this repo, install IPython (on Python 2.7
 `ipython notebook` in the repo directory. We highly recommend installing the Anaconda Python distribution, which includes IPython, Scikit-Learn, Pandas, and mostly anything else used throughout the book:
 
 https://www.continuum.io/downloads
+# machine_learning
